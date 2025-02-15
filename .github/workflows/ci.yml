@@ -2,18 +2,13 @@ name: CI - Pruebas unitarias
 
 on:
   push:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
   pull_request:
-    branches:
-      - main
-      - dev
+    branches: [main, dev]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Clonar el repositorio
         uses: actions/checkout@v3
@@ -25,6 +20,13 @@ jobs:
 
       - name: Instalar dependencias
         run: npm install
+
+      # Paso para corregir line endings y permisos
+      - name: Convertir line endings a LF
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dos2unix
+          find node_modules/.bin -type f -exec dos2unix {} \;
 
       - name: Ejecutar pruebas unitarias
         run: npm test
